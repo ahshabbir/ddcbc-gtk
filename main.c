@@ -15,7 +15,7 @@ set_brightness(GtkWidget *widget, GdkEvent *event, gpointer data)
 	if (rc != 0)
 		g_printerr(
 			"An error occured when setting the brightness of display no"
-			"%d to %u.Code: %d\n", 
+			" %d to %u. Code: %d\n", 
 			disp->info.dispno, new_val, rc);	
 	return FALSE;
 }
