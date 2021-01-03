@@ -4,7 +4,10 @@
 typedef struct display_section {
 	GtkWidget *label;
 	GtkWidget *scale;
+	GtkWidget *seperator;
 } display_section;
+
+const int MARGIN_UNIT = 8;
 
 gboolean
 set_brightness(GtkWidget *widget, GdkEvent *event, gpointer data) 
@@ -12,7 +15,12 @@ set_brightness(GtkWidget *widget, GdkEvent *event, gpointer data)
 	ddcbc_display *disp = data;
 	guint16 new_val = gtk_range_get_value(GTK_RANGE(widget));         
 	DDCBC_Status rc = ddcbc_display_set_brightness(disp, new_val);
-	if (rc != 0)
+	if (rc == 1)
+		g_printerr(
+			"Partial sucess in setting the brightness of display no"
+			" %d to %u. Code: %d\n", 
+			disp->info.dispno, new_val, rc);	
+	else if (rc != 0)
 		g_printerr(
 			"An error occured when setting the brightness of display no"
 			" %d to %u. Code: %d\n", 
@@ -28,16 +36,24 @@ display_section_init (ddcbc_display *disp)
 	
 	ds->label = gtk_label_new (disp->info.model_name);
 	gtk_widget_set_hexpand (ds->label, FALSE);
+	gtk_widget_set_valign(ds->label, GTK_ALIGN_CENTER);
 	gtk_label_set_xalign (GTK_LABEL (ds->label), 0.0);
+	gtk_widget_set_margin_start(ds->label, MARGIN_UNIT);
+	gtk_widget_set_margin_top(ds->label, 2 * MARGIN_UNIT);
 
 	ds->scale = gtk_scale_new_with_range (GTK_ORIENTATION_HORIZONTAL, 0, 
 		disp->max_val, 1);
 	gtk_widget_set_halign (ds->scale, 0.0);
 	gtk_range_set_value (GTK_RANGE(ds->scale), disp->last_val);
+	gtk_scale_set_value_pos(GTK_SCALE(ds->scale), GTK_POS_RIGHT);
 	gtk_widget_set_hexpand (ds->scale, TRUE);
+	gtk_widget_set_margin_top(ds->scale, MARGIN_UNIT);
+	gtk_widget_set_margin_bottom(ds->scale, MARGIN_UNIT);
 	g_signal_connect (ds->scale, "button-release-event", 
 		G_CALLBACK (set_brightness), disp);
-	
+
+	ds->seperator = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
+	gtk_widget_set_margin_start(ds->seperator, 0);
 	return ds;
 }
 
@@ -48,14 +64,22 @@ static void
 display_section_attach_next_to(display_section *ds, GtkGrid *grid, 
 	display_section *sibling) 
 {
-	
-	if (sibling == NULL)
-		gtk_grid_attach(GTK_GRID (grid), ds->label, 0, 0, 1, 1);
-	else
+	if (sibling == NULL) {
+		gtk_grid_attach(GTK_GRID (grid), ds->label, 1, 0, 1, 1);
+	} else {
 		gtk_grid_attach_next_to(GTK_GRID(grid), ds->label, 
-					sibling->scale, GTK_POS_BOTTOM, 1, 1);
+					sibling->seperator, GTK_POS_BOTTOM, 1, 1);
+	}
 	gtk_grid_attach_next_to(GTK_GRID(grid), ds->scale, ds->label,
 		GTK_POS_BOTTOM, 1, 1);
+	gtk_grid_attach_next_to(GTK_GRID(grid), ds->seperator, ds->scale, GTK_POS_BOTTOM, 1, 1);
+	
+	GtkWidget *icon = gtk_image_new_from_icon_name("video-display", GTK_ICON_SIZE_BUTTON);
+	gtk_widget_set_margin_start(icon, MARGIN_UNIT);
+	gtk_widget_set_margin_top(icon, 2 * MARGIN_UNIT);
+	gtk_widget_set_valign(icon, GTK_ALIGN_CENTER);
+	gtk_grid_attach_next_to(GTK_GRID(grid), icon, ds->label, GTK_POS_LEFT, 1, 1);
+	
 }
 
 static void
@@ -63,22 +87,17 @@ activate (GtkApplication *app, gpointer data)
 {
 	GtkWidget *window;
 	GtkWidget *grid;
+	GtkWindow *window_icon;
 
 	ddcbc_display_list *dlist = data;
 
 	window = gtk_application_window_new (app);
-	gtk_window_set_title (GTK_WINDOW (window), "Brightness Control");
-	gtk_window_set_default_size (GTK_WINDOW(window), 300, 200);
+	gtk_window_set_title (GTK_WINDOW (window), "DDC Brightness Control");
+	gtk_window_set_default_size (GTK_WINDOW(window), 300, 0);
 	g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 	
 	grid = gtk_grid_new();
 	gtk_container_add (GTK_CONTAINER (window), grid);
-		
-	GtkCssProvider *cssProvider = gtk_css_provider_new();
-	gtk_css_provider_load_from_path(cssProvider, "style.css", NULL);
-	gtk_style_context_add_provider_for_screen(gdk_screen_get_default(),
-        GTK_STYLE_PROVIDER(cssProvider), GTK_STYLE_PROVIDER_PRIORITY_USER);
-	
 	display_section **sections = malloc(dlist->ct);
 	display_section *sibling = NULL;
 	for (guint it = 0; it < dlist->ct; it++) {
