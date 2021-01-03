@@ -41,3 +41,7 @@ You should now be able to find ddcbc-gtk or DDC Brightness Control in your appli
 1. Unaligned seperator between each monitor. [#1](../../issues/1)
 2. Find/create a logo. [#2](../../issues/2)
 3. Add directions for installing deps on other distros. [#3](../../issues/3)
+
+# Credits
+rockowitz - for ddcutil c api:
+https://github.com/rockowitz/ddcutil
