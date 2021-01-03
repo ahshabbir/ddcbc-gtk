@@ -1,2 +1,4 @@
 .vscode
 ddcbc-gtk
+ddcbc-gtk-debug
+compile_flags.txt

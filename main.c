@@ -9,6 +9,8 @@ typedef struct display_section {
 
 const int MARGIN_UNIT = 8;
 
+// set_brightness is the event handler that changes the brightness of a ddcbc
+// display passed in through 'data'. 
 gboolean
 set_brightness(GtkWidget *widget, GdkEvent *event, gpointer data) 
 {
@@ -54,6 +56,7 @@ display_section_init (ddcbc_display *disp)
 
 	ds->seperator = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
 	gtk_widget_set_margin_start(ds->seperator, 0);
+	gtk_widget_set_halign(ds->seperator, 0);
 	return ds;
 }
 
@@ -72,9 +75,11 @@ display_section_attach_next_to(display_section *ds, GtkGrid *grid,
 	}
 	gtk_grid_attach_next_to(GTK_GRID(grid), ds->scale, ds->label,
 		GTK_POS_BOTTOM, 1, 1);
-	gtk_grid_attach_next_to(GTK_GRID(grid), ds->seperator, ds->scale, GTK_POS_BOTTOM, 1, 1);
+	gtk_grid_attach_next_to(GTK_GRID(grid), ds->seperator, ds->scale, 
+		GTK_POS_BOTTOM, 1, 1);
 	
-	GtkWidget *icon = gtk_image_new_from_icon_name("video-display", GTK_ICON_SIZE_BUTTON);
+	GtkWidget *icon;
+	icon = gtk_image_new_from_icon_name("video-display", GTK_ICON_SIZE_BUTTON);
 	gtk_widget_set_margin_start(icon, MARGIN_UNIT);
 	gtk_widget_set_margin_top(icon, 2 * MARGIN_UNIT);
 	gtk_widget_set_valign(icon, GTK_ALIGN_CENTER);
@@ -117,6 +122,13 @@ main(int argc, char **argv)
 	int status;
 
 	ddcbc_display_list dlist = ddcbc_display_list_init(FALSE);
+
+	if (dlist.ct <= 0) {
+		g_printerr("No supported displays found. Please check if ddcutil is " 
+			" properly installed and/or whether you have any "
+			" supported monitors.");
+		return 1;
+	}
 
 	app = gtk_application_new("org.gtk.ddcbc-gtk", G_APPLICATION_FLAGS_NONE);
 	g_signal_connect (app, "activate", G_CALLBACK (activate), &dlist);
