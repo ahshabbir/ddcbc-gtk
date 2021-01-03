@@ -12,7 +12,9 @@ A GTK Interface for controlling brightness through the DDC/CI protocol. It inclu
 1. Firstly, ensure that all the dependancies are installed.
 
 Arch Linux:
-`pacman -S --needed ddcutil gtk3`
+```
+pacman -S --needed ddcutil gtk3
+```
 
 TODO: Add other distributions to this! [#3](../../issues/3)
 
@@ -20,7 +22,9 @@ TODO: Add other distributions to this! [#3](../../issues/3)
 https://www.ddcutil.com/i2c_permissions/
 
 3. Clone this repo along with its submodules:
-`git clone --recurse-submodules https://github.com/ahshabbir/ddcbc-gtk.git`
+```
+git clone --recurse-submodules https://github.com/ahshabbir/ddcbc-gtk.git
+```
 
 4. Change into the ddcbc-gtk directory and execute build.sh to build this application:
 ```
@@ -29,10 +33,14 @@ cd ddcbc-gtk
 ```
 
 5. This should result in a ddcbc-gtk binary that you can execute to contol the brightness:
-`./ddcbc-gtk`
+```
+./ddcbc-gtk
+```
 
 To install this binary for all users execute 'install.sh' as root:
-`sudo ./install.sh`
+```
+sudo ./install.sh
+```
 
 You should now be able to find ddcbc-gtk or DDC Brightness Control in your application menu under utilities.
 
