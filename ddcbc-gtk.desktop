@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=DDC Brightness Control
+Exec=/usr/bin/ddcbc-gtk
+Type=Application
+Categories=GTK;Utility;
