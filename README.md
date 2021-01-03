@@ -14,7 +14,7 @@ A GTK Interface for controlling brightness through the DDC/CI protocol. It inclu
 Arch Linux:
 `pacman -S --needed ddcutil gtk3`
 
-TODO: Add other distributions to this!
+TODO: Add other distributions to this! [#3](../../issues/3)
 
 2. Ensure that your user has access to the i2c devices:
 https://www.ddcutil.com/i2c_permissions/
@@ -38,6 +38,6 @@ You should now be able to find ddcbc-gtk or DDC Brightness Control in your appli
 
 # Known Issues/Todos
 
-1. Unaligned seperator between each monitor.
-2. Find/create a logo.
-3. Add directions for installing deps on other distros.
+1. Unaligned seperator between each monitor. [#1](../../issues/1)
+2. Find/create a logo. [#2](../../issues/2)
+3. Add directions for installing deps on other distros. [#3](../../issues/3)
