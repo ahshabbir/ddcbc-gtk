@@ -11,9 +11,16 @@ A GTK Interface for controlling brightness through the DDC/CI protocol. It inclu
 
 1. Firstly, ensure that all the dependancies are installed.
 
-Arch Linux:
+#### Arch Linux:
 ```
 pacman -S --needed ddcutil gtk3
+```
+
+#### Ubuntu-based distros (credit @aidengilmartin):
+```
+sudo apt install libgtk3-dev gcc
+sudo add-apt-repository ppa:rockowitz/ddcutil # add ddcutil repo
+sudo apt install ddcutil libddcutil-dev
 ```
 
 TODO: Add other distributions to this! [#3](../../issues/3)
