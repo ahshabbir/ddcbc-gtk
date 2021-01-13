@@ -57,6 +57,21 @@ set_brightness(GtkWidget *widget, GdkEvent *event, gpointer data)
 	return FALSE;
 }
 
+void
+adjust_other_sliders(GtkRange *range, gpointer data) 
+{
+	set_brightness_data *dat = data;
+	gboolean linkSlides = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dat->linkBtn));
+
+	guint new_val = gtk_range_get_value(range);
+	if (linkSlides) {
+		for (guint it = 0; it < dat->disp_sections_len; it++) {
+			GtkWidget *scale = dat->disp_sections[it]->scale;
+			gtk_range_set_value(GTK_RANGE(scale), new_val);
+		}
+	}
+}
+
 // display_section_init initializes a display section from a disp object.
 display_section*
 display_section_init (ddcbc_display *disp, set_brightness_data *dat) 
@@ -82,7 +97,8 @@ display_section_init (ddcbc_display *disp, set_brightness_data *dat)
 	
 	g_signal_connect (ds->scale, "button-release-event", 
 		G_CALLBACK (set_brightness), dat);
-
+	g_signal_connect (ds->scale, "value-changed", G_CALLBACK(adjust_other_sliders), dat);
+	
 	ds->seperator = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
 	gtk_widget_set_margin_start(ds->seperator, 0);
 	gtk_widget_set_halign(ds->seperator, 0);
