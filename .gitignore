@@ -1,4 +1,8 @@
 .vscode
 ddcbc-gtk
 ddcbc-gtk-debug
+ddcbc-gtk.desktop
 compile_flags.txt
+
+# Vim swap files
+*.swp

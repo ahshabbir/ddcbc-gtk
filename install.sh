@@ -1,18 +1,17 @@
 #!/bin/bash
+set -e
 
-# This script builds and installs ddcbc-gtk for all users. Root permissions
-# are needed for this.
+# This script builds and installs ddcbc-gtk into PREFIX.
+# If PREFIX is not specified, it defaults to /usr/local.
 
-if [ `whoami` != "root" ]
-then
-    echo "Not root. Exiting..."
-    exit
+if [ -z $PREFIX ]; then
+	PREFIX="/usr/local"
 fi
 
 echo "Building ddcbc-gtk..."
 ./build.sh
-echo "Copying ddcbc-gtk to /usr/bin..."
-cp ./ddcbc-gtk /usr/bin/ddcbc-gtk
-echo "Copying desktop file to /usr/share/applications..."
-cp ./ddcbc-gtk.desktop /usr/share/applications/ddcbc-gtk.desktop
+echo "Copying ddcbc-gtk to $PREFIX/bin..."
+cp ./ddcbc-gtk "$PREFIX/bin/ddcbc-gtk"
+echo "Copying desktop file to $PREFIX/share/applications..."
+cp ./ddcbc-gtk.desktop "$PREFIX/share/applications/ddcbc-gtk.desktop"
 echo "Done!"
